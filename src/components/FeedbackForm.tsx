@@ -102,19 +102,20 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
   if (results.length === 0) return null;
 
   return (
-    <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass border-l-4 border-l-neon-purple">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-white flex items-center gap-2">
-          💫 Rate This Classification
+    <Card className="card-professional animate-scale-in border-l-4 border-l-primary">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg text-foreground flex items-center gap-2">
+          <Star className="h-5 w-5 text-primary" />
+          Rate This Classification
         </CardTitle>
-        <p className="text-sm text-gray-300">
-          Your feedback helps improve the dialect classifier for everyone ✨
+        <p className="text-sm text-muted-foreground">
+          Your feedback helps improve the dialect classifier for everyone
         </p>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {/* Quick Correct/Incorrect buttons */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white">
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-foreground">
             Was the classification correct?
           </label>
           <div className="flex gap-3">
@@ -124,12 +125,12 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
               onClick={() => setIsCorrect(true)}
               className={`flex items-center gap-2 transition-all duration-200 ${
                 isCorrect === true 
-                  ? "bg-gradient-primary text-white shadow-neon" 
-                  : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  ? "bg-success text-white shadow-lg" 
+                  : "border-border hover:border-primary/50"
               }`}
             >
               <ThumbsUp className="h-4 w-4" />
-              ✅ Correct
+              Correct
             </Button>
             <Button
               variant={isCorrect === false ? "default" : "outline"}
@@ -137,69 +138,77 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
               onClick={() => setIsCorrect(false)}
               className={`flex items-center gap-2 transition-all duration-200 ${
                 isCorrect === false 
-                  ? "bg-gradient-secondary text-white shadow-neon" 
-                  : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+                  ? "bg-destructive text-white shadow-lg" 
+                  : "border-border hover:border-primary/50"
               }`}
             >
               <ThumbsDown className="h-4 w-4" />
-              ❌ Incorrect
+              Incorrect
             </Button>
           </div>
         </div>
 
         {/* Star rating */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white">
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-foreground">
             Rate the overall quality (optional)
           </label>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   onClick={() => setRating(star)}
-                  className="transition-all duration-200 hover:scale-110"
+                  className="transition-all duration-200 hover:scale-110 p-1 rounded-md hover:bg-muted/50"
+                  type="button"
                 >
                   <Star
                     className={`h-6 w-6 transition-colors ${
                       star <= rating 
-                        ? "fill-neon-cyan text-neon-cyan drop-shadow-lg" 
-                        : "text-gray-400 hover:text-neon-cyan/50"
+                        ? "fill-yellow-400 text-yellow-400 drop-shadow-sm" 
+                        : "text-muted-foreground hover:text-yellow-300"
                     }`}
                   />
                 </button>
               ))}
             </div>
             {rating > 0 && (
-              <span className="text-sm text-gray-300 font-medium">
-                {rating === 1 ? "😞 Poor" : 
-                 rating === 2 ? "😐 Fair" : 
-                 rating === 3 ? "😊 Good" : 
-                 rating === 4 ? "😄 Very Good" : "🤩 Excellent"}
+              <span className="text-sm text-muted-foreground font-medium">
+                {rating === 1 ? "Poor" : 
+                 rating === 2 ? "Fair" : 
+                 rating === 3 ? "Good" : 
+                 rating === 4 ? "Very Good" : "Excellent"}
               </span>
             )}
           </div>
         </div>
 
         {/* Comment */}
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-white">
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-foreground">
             Additional comments (optional)
           </label>
           <Textarea
             placeholder="Any additional feedback about the classification..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="min-h-20 bg-white/5 border-white/20 text-white placeholder:text-gray-400 backdrop-blur-sm"
+            className="min-h-24 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm"
           />
         </div>
 
         <Button 
           onClick={handleSubmitFeedback}
           disabled={isSubmitting || (rating === 0 && isCorrect === null)}
-          className="w-full bg-gradient-accent hover:bg-gradient-primary text-white font-bold py-3 rounded-xl transition-all duration-200 hover:scale-105 shadow-neon disabled:opacity-50"
+          className="btn-professional w-full py-3 font-semibold rounded-xl disabled:opacity-50"
         >
-          {isSubmitting ? "⏳ Submitting..." : "🚀 Submit Feedback"}
+          {isSubmitting ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+              Submitting Feedback...
+            </>
+          ) : (
+            "Submit Feedback"
+          )}
         </Button>
       </CardContent>
     </Card>
