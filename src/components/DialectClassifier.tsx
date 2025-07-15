@@ -43,31 +43,58 @@ const DialectClassifier = () => {
   // Fallback keyword-based classification for Arabic
   const classifyArabicByKeywords = (text: string): ClassificationResult[] => {
     const keywords = {
-      egyptian: ["إيه", "إزيك", "إزايك", "يلا", "كدة", "أصل", "علشان"],
-      levantine: ["شو", "كيفك", "بدي", "هيك", "مشان", "عم"],
-      gulf: ["شلونك", "وش", "ليش", "عاد", "زين", "أبي"],
-      maghrebi: ["كيفاش", "شحال", "بغيت", "درت", "مزيان"]
+      egyptian: ["إيه", "إزيك", "إزايك", "يلا", "كدة", "أصل", "علشان", "عامل", "ايه", "معلش", "خلاص", "عشان"],
+      levantine: ["شو", "كيفك", "بدي", "هيك", "مشان", "عم", "شلون", "وين", "هالقد", "يا رب", "منيح"],
+      
+      // Expanded Maghrebi with regional variants
+      moroccan: ["واخا", "غير", "ديال", "حنا", "بلا", "شي", "حاجة", "كيفاش", "شحال", "بغيت", "درت", "مزيان", "واش", "بصح", "فين", "لا"],
+      algerian: ["راني", "كيما", "تاع", "ولاّ", "برك", "حتى", "نشوف", "شرايك", "وين", "كاين", "مكانش", "بصح"],
+      tunisian: ["آش", "حكاية", "فمّة", "برشا", "بالله", "توّا", "شنيّة", "كيفاش", "وقتاش", "فمّة", "موش"],
+      
+      // Specific Gulf dialects
+      saudi_najdi: ["وش", "ليش", "عاد", "زين", "أبي", "شنو", "وين", "يا ذيب", "علي", "مره", "خوي"],
+      saudi_hijazi: ["إيش", "وش", "كدا", "زي كدا", "يا عمي", "حبيبي", "خوي", "دحين", "ايوه"],
+      emirati: ["شلونك", "شلون", "ثاني", "بعدين", "واجد", "ماشي", "زين", "خلاص", "دبي", "يالله"],
+      kuwaiti: ["شلونك", "شنو", "شكو", "ماكو", "جان", "عادي", "زين", "خلاص", "شدعوى", "لول"],
+      bahraini: ["شلونك", "شنو", "كيف", "زين", "واجد", "خلاص", "شداعي", "جان", "ماشي"],
+      omani: ["شلونك", "شنو", "كيف", "زين", "واجد", "خلاص", "بعدين", "ماشي", "عسى"]
     };
 
     const dialectMappings = {
       egyptian: { name: "Egyptian Arabic", description: "Common in Egypt and widely understood across the Arab world" },
       levantine: { name: "Levantine Arabic", description: "Used in Syria, Lebanon, Jordan, and Palestine" },
-      gulf: { name: "Gulf Arabic", description: "Spoken in the Arabian Peninsula and Gulf states" },
-      maghrebi: { name: "Maghrebi Arabic", description: "Spoken in North African countries" }
+      moroccan: { name: "Moroccan Arabic", description: "Darija dialect spoken in Morocco" },
+      algerian: { name: "Algerian Arabic", description: "Dialect spoken in Algeria with Berber influences" },
+      tunisian: { name: "Tunisian Arabic", description: "Unique dialect spoken in Tunisia" },
+      saudi_najdi: { name: "Saudi Najdi Arabic", description: "Dialect of central Saudi Arabia (Riyadh region)" },
+      saudi_hijazi: { name: "Saudi Hijazi Arabic", description: "Dialect of western Saudi Arabia (Mecca, Medina)" },
+      emirati: { name: "Emirati Arabic", description: "Dialect spoken in the United Arab Emirates" },
+      kuwaiti: { name: "Kuwaiti Arabic", description: "Dialect spoken in Kuwait" },
+      bahraini: { name: "Bahraini Arabic", description: "Dialect spoken in Bahrain" },
+      omani: { name: "Omani Arabic", description: "Dialect spoken in Oman" }
     };
 
     const scores = {
       egyptian: 0,
       levantine: 0,
-      gulf: 0,
-      maghrebi: 0
+      moroccan: 0,
+      algerian: 0,
+      tunisian: 0,
+      saudi_najdi: 0,
+      saudi_hijazi: 0,
+      emirati: 0,
+      kuwaiti: 0,
+      bahraini: 0,
+      omani: 0
     };
 
-    // Check for keyword matches
+    // Enhanced scoring with weighted keywords
     Object.entries(keywords).forEach(([dialect, words]) => {
-      words.forEach(word => {
+      words.forEach((word, index) => {
         if (text.includes(word)) {
-          scores[dialect as keyof typeof scores] += 0.3;
+          // Weight rare/distinctive words higher (first few words are usually more distinctive)
+          const weight = index < 3 ? 0.6 : index < 6 ? 0.4 : 0.3;
+          scores[dialect as keyof typeof scores] += weight;
         }
       });
     });
