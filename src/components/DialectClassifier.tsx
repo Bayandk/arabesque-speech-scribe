@@ -196,23 +196,23 @@ const DialectClassifier = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 animate-fade-in">
         <div className="flex justify-center">
-          <div className="p-3 rounded-full bg-gradient-primary shadow-glow">
-            <Languages className="h-8 w-8 text-white" />
+          <div className="p-3 rounded-full bg-gradient-primary shadow-glow animate-glow-pulse">
+            <Languages className="h-8 w-8 text-white animate-bounce-gentle" />
           </div>
         </div>
-        <h1 className="text-4xl font-bold text-foreground">Dialect Identifier</h1>
-        <p className="text-academic-gray text-lg max-w-2xl mx-auto">
+        <h1 className="text-4xl font-bold text-foreground animate-slide-up">Dialect Identifier</h1>
+        <p className="text-academic-gray text-lg max-w-2xl mx-auto animate-slide-up delay-100">
           Analyze and classify the dialect of Arabic or English text using advanced natural language processing
         </p>
       </div>
 
       {/* Input Section */}
-      <Card className="shadow-elegant">
+      <Card className="shadow-elegant animate-scale-in hover:shadow-glow transition-all duration-300">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-academic-blue" />
+            <Globe className="h-5 w-5 text-academic-blue animate-pulse-soft" />
             Text Analysis
           </CardTitle>
         </CardHeader>
@@ -220,7 +220,7 @@ const DialectClassifier = () => {
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground">Language</label>
             <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full transition-all duration-200 hover:border-academic-blue focus:border-academic-blue">
                 <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
@@ -239,7 +239,7 @@ const DialectClassifier = () => {
               }
               value={text}
               onChange={(e) => setText(e.target.value)}
-              className="min-h-32 resize-none"
+              className="min-h-32 resize-none transition-all duration-200 hover:border-academic-blue focus:border-academic-blue"
               dir={language === "arabic" ? "rtl" : "ltr"}
             />
           </div>
@@ -249,11 +249,11 @@ const DialectClassifier = () => {
             disabled={isAnalyzing || !text.trim()}
             variant="analyze"
             size="lg"
-            className="w-full"
+            className="w-full transform transition-all duration-200 hover:scale-105 active:scale-95"
           >
             {isAnalyzing ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 Analyzing...
               </>
             ) : (
@@ -265,22 +265,27 @@ const DialectClassifier = () => {
 
       {/* Results Section */}
       {results.length > 0 && (
-        <Card className="shadow-elegant animate-fade-in">
+        <Card className="shadow-elegant animate-scale-in">
           <CardHeader>
-            <CardTitle className="text-academic-blue">Classification Results</CardTitle>
+            <CardTitle className="text-academic-blue flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-academic-blue animate-pulse-soft"></div>
+              Classification Results
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {results.map((result, index) => (
               <div 
                 key={index}
-                className="flex items-start justify-between p-4 bg-gradient-subtle rounded-lg border border-border hover:shadow-md transition-smooth"
+                className="flex items-start justify-between p-4 bg-gradient-subtle rounded-lg border border-border hover:shadow-md transition-all duration-300 hover:scale-[1.02] animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center gap-3">
                     <h3 className="font-semibold text-lg text-foreground">{result.dialect}</h3>
                     <Badge 
                       variant="secondary" 
-                      className={`${getConfidenceColor(result.confidence)} text-white`}
+                      className={`${getConfidenceColor(result.confidence)} text-white animate-scale-in`}
+                      style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
                     >
                       {getConfidenceLabel(result.confidence, index === 0, results)} Confidence
                     </Badge>
@@ -288,13 +293,17 @@ const DialectClassifier = () => {
                   <p className="text-academic-gray text-sm">{result.description}</p>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-academic-blue">
+                  <div className="text-2xl font-bold text-academic-blue animate-scale-in" 
+                       style={{ animationDelay: `${index * 0.1 + 0.3}s` }}>
                     {(result.confidence * 100).toFixed(1)}%
                   </div>
-                  <div className="w-24 bg-academic-gray-light rounded-full h-2 mt-1">
+                  <div className="w-24 bg-academic-gray-light rounded-full h-2 mt-1 overflow-hidden">
                     <div 
-                      className="bg-gradient-primary h-2 rounded-full transition-smooth"
-                      style={{ width: `${result.confidence * 100}%` }}
+                      className="bg-gradient-primary h-2 rounded-full transition-all duration-1000 ease-out animate-slide-up"
+                      style={{ 
+                        width: `${result.confidence * 100}%`,
+                        animationDelay: `${index * 0.1 + 0.5}s`
+                      }}
                     />
                   </div>
                 </div>
