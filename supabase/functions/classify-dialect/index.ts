@@ -88,7 +88,12 @@ serve(async (req) => {
 function classifyArabicByKeywords(text: string) {
   const keywords = {
     egyptian: ["إيه", "إزيك", "إزايك", "يلا", "كدة", "أصل", "علشان", "عامل", "ايه", "معلش", "خلاص", "عشان"],
-    levantine: ["شو", "كيفك", "بدي", "هيك", "مشان", "عم", "شلون", "وين", "هالقد", "يا رب", "منيح"],
+    
+    // Specific Levantine dialects
+    syrian: ["شو", "ليش", "هلّق", "كتير", "مو", "إيمتى", "لسا", "بدي", "عنجد؟", "شبك؟"],
+    lebanese: ["شو", "ليه", "هلّق", "كتير", "ما في", "بدي", "عن جد", "هيك", "شو عملت؟", "بلا طعمة"],
+    palestinian: ["شو", "ليش", "هلأ", "كثير", "ما فيش", "بدي", "عنجد", "هيك", "شو بتسوي؟", "ما إله طعمة"],
+    jordanian: ["شو", "ليش", "هلأ", "كثير", "ما فيه", "بدي", "عن جد؟", "هيك", "شو صاير؟", "خلص"],
     
     // Expanded Maghrebi with regional variants
     moroccan: ["واخا", "غير", "ديال", "حنا", "بلا", "شي", "حاجة", "كيفاش", "شحال", "بغيت", "درت", "مزيان", "واش", "بصح", "فين", "لا"],
@@ -106,7 +111,10 @@ function classifyArabicByKeywords(text: string) {
 
   const dialectMappings = {
     egyptian: { name: "Egyptian Arabic", description: "Common in Egypt and widely understood across the Arab world" },
-    levantine: { name: "Levantine Arabic", description: "Used in Syria, Lebanon, Jordan, and Palestine" },
+    syrian: { name: "Syrian Arabic", description: "Dialect spoken in Syria" },
+    lebanese: { name: "Lebanese Arabic", description: "Dialect spoken in Lebanon" },
+    palestinian: { name: "Palestinian Arabic", description: "Dialect spoken in Palestine and the West Bank" },
+    jordanian: { name: "Jordanian Arabic", description: "Dialect spoken in Jordan" },
     moroccan: { name: "Moroccan Arabic", description: "Darija dialect spoken in Morocco" },
     algerian: { name: "Algerian Arabic", description: "Dialect spoken in Algeria with Berber influences" },
     tunisian: { name: "Tunisian Arabic", description: "Unique dialect spoken in Tunisia" },
@@ -120,7 +128,10 @@ function classifyArabicByKeywords(text: string) {
 
   const scores = {
     egyptian: 0,
-    levantine: 0,
+    syrian: 0,
+    lebanese: 0,
+    palestinian: 0,
+    jordanian: 0,
     moroccan: 0,
     algerian: 0,
     tunisian: 0,
