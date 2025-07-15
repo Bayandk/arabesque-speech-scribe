@@ -158,38 +158,70 @@ const DialectClassifier = () => {
           <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-accent-secondary/5 rounded-full blur-3xl animate-float delay-2000"></div>
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto p-8 space-y-8">
-          {/* Simple Header */}
-          <div className="text-center space-y-6 animate-fade-in">
-            <h1 className="text-4xl font-bold text-transparent bg-gradient-primary bg-clip-text">
+        <div className="relative z-10 max-w-4xl mx-auto p-8 space-y-10">
+          {/* Professional Header */}
+          <div className="text-center space-y-8 animate-fade-in">
+            <div className="flex justify-center">
+              <div className="relative p-4 rounded-2xl bg-gradient-primary shadow-glow backdrop-blur-lg border border-white/10">
+                <Languages className="h-8 w-8 text-white animate-float" />
+                <div className="absolute inset-0 bg-gradient-secondary rounded-2xl blur opacity-20 -z-10"></div>
+              </div>
+            </div>
+            <h1 className="text-5xl font-bold text-transparent bg-gradient-primary bg-clip-text leading-tight">
               AI-powered Arabic dialect classification
             </h1>
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span>Machine Learning</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-accent" />
+                <span>Real-time Analysis</span>
+              </div>
+            </div>
           </div>
 
-          {/* Simple Input Section */}
+          {/* Professional Input Section */}
           <Card className="card-professional animate-scale-in">
-            <CardContent className="space-y-6 pt-6">
-              <Textarea
-                placeholder="أدخل النص هنا"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="min-h-32 resize-none bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm text-lg"
-                dir="rtl"
-              />
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-3 text-foreground text-lg">
+                <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                  <Globe className="h-4 w-4 text-primary" />
+                </div>
+                Text Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Arabic Text Input
+                </label>
+                <Textarea
+                  placeholder="أدخل النص هنا"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  className="min-h-40 resize-none bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm text-lg leading-relaxed shadow-sm"
+                  dir="rtl"
+                />
+              </div>
 
               <Button 
                 onClick={handleAnalyze}
                 disabled={isAnalyzing || !text.trim()}
                 size="lg"
-                className="btn-professional w-full py-4 text-lg font-semibold rounded-xl"
+                className="btn-professional w-full py-4 text-lg font-semibold rounded-xl shadow-elegant"
               >
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin mr-3" />
-                    Analyzing...
+                    Analyzing Dialect...
                   </>
                 ) : (
-                  "Analyze"
+                  <>
+                    <Sparkles className="h-5 w-5 mr-3" />
+                    Analyze Dialect
+                  </>
                 )}
               </Button>
             </CardContent>
