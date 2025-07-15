@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2, Languages, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-
+import FeedbackForm from "./FeedbackForm";
 interface ClassificationResult {
   dialect: string;
   confidence: number;
@@ -19,6 +19,7 @@ const DialectClassifier = () => {
   const [language, setLanguage] = useState("arabic");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ClassificationResult[]>([]);
+  const [showFeedback, setShowFeedback] = useState(false);
   const { toast } = useToast();
 
   // Real classification function using Supabase Edge Function
@@ -144,9 +145,11 @@ const DialectClassifier = () => {
     }
 
     setIsAnalyzing(true);
+    setShowFeedback(false); // Hide feedback form when analyzing
     try {
       const classificationResults = await classifyDialect(text, language);
       setResults(classificationResults);
+      setShowFeedback(true); // Show feedback form after results
       
       // Implement improved confidence logic
       const topScore = classificationResults[0]?.confidence || 0;
@@ -167,6 +170,10 @@ const DialectClassifier = () => {
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleFeedbackSubmitted = () => {
+    setShowFeedback(false);
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -295,6 +302,16 @@ const DialectClassifier = () => {
             ))}
           </CardContent>
         </Card>
+      )}
+
+      {/* Feedback Section */}
+      {showFeedback && results.length > 0 && (
+        <FeedbackForm
+          text={text}
+          language={language}
+          results={results}
+          onFeedbackSubmitted={handleFeedbackSubmitted}
+        />
       )}
     </div>
   );

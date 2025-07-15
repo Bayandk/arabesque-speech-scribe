@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      dialect_feedback: {
+        Row: {
+          confidence: number
+          created_at: string
+          id: string
+          is_correct: boolean | null
+          language: string
+          predicted_dialect: string
+          text_analyzed: string
+          user_comment: string | null
+          user_rating: number | null
+        }
+        Insert: {
+          confidence: number
+          created_at?: string
+          id?: string
+          is_correct?: boolean | null
+          language: string
+          predicted_dialect: string
+          text_analyzed: string
+          user_comment?: string | null
+          user_rating?: number | null
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          id?: string
+          is_correct?: boolean | null
+          language?: string
+          predicted_dialect?: string
+          text_analyzed?: string
+          user_comment?: string | null
+          user_rating?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
