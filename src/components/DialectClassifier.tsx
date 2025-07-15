@@ -1,10 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Languages, Globe } from "lucide-react";
+import { Loader2, Languages, Globe, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import FeedbackForm from "./FeedbackForm";
@@ -19,7 +18,19 @@ const DialectClassifier = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ClassificationResult[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
+
+  // Custom cursor tracking
+  useEffect(() => {
+    const updateCursor = (e: MouseEvent) => {
+      setCursorPosition({ x: e.clientX, y: e.clientY });
+    };
+
+    document.addEventListener('mousemove', updateCursor);
+    return () => document.removeEventListener('mousemove', updateCursor);
+  }, []);
 
   // Real classification function using Supabase Edge Function
   const classifyDialect = async (inputText: string): Promise<ClassificationResult[]> => {
@@ -134,15 +145,15 @@ const DialectClassifier = () => {
   };
 
   const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.7) return "bg-green-500";
-    if (confidence >= 0.5) return "bg-yellow-500";
-    return "bg-red-500";
+    if (confidence >= 0.7) return "bg-success text-white";
+    if (confidence >= 0.5) return "bg-warning text-background";
+    return "bg-destructive text-white";
   };
 
   const getConfidenceLabel = (confidence: number, isTopResult: boolean, results: ClassificationResult[]) => {
     if (isTopResult && results.length > 1) {
       const secondHighest = results[1]?.confidence || 0;
-      const isHighConfidence = confidence >= (secondHighest + 0.1); // 10% threshold
+      const isHighConfidence = confidence >= (secondHighest + 0.1);
       if (isHighConfidence && confidence >= 0.6) return "High";
     }
     if (confidence >= 0.7) return "High";
@@ -151,134 +162,183 @@ const DialectClassifier = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-slate-900 to-purple-900/20 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-neon-cyan/20 rounded-full blur-3xl animate-float delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-neon-pink/10 rounded-full blur-3xl animate-float delay-2000"></div>
-      </div>
+    <>
+      {/* Custom Cursor */}
+      <div 
+        className={`custom-cursor ${isHovering ? 'cursor-hover' : ''}`}
+        style={{
+          left: cursorPosition.x - 10,
+          top: cursorPosition.y - 10,
+        }}
+      />
+      <div 
+        className="custom-cursor-trail"
+        style={{
+          left: cursorPosition.x - 4,
+          top: cursorPosition.y - 4,
+        }}
+      />
 
-      <div className="relative z-10 max-w-4xl mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-6 animate-fade-in">
-          <div className="flex justify-center">
-            <div className="relative p-4 rounded-2xl bg-gradient-primary shadow-glow animate-glow-pulse backdrop-blur-sm">
-              <Languages className="h-10 w-10 text-white animate-float" />
-              <div className="absolute inset-0 bg-gradient-accent rounded-2xl blur opacity-50 -z-10 animate-gradient-shift bg-300%"></div>
-            </div>
-          </div>
-          <h1 className="text-5xl font-black text-transparent bg-gradient-primary bg-clip-text animate-gradient-shift bg-300%">
-            Arabic Dialect Identifier
-          </h1>
-          <p className="text-gray-300 text-xl max-w-2xl mx-auto font-medium">
-            AI-powered Arabic dialect classification with 🔥 accuracy
-          </p>
+      <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
+        {/* Professional animated background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
+          <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-float delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-accent-secondary/5 rounded-full blur-3xl animate-float delay-2000"></div>
         </div>
 
-        {/* Input Section */}
-        <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass animate-scale-in hover:shadow-neon transition-all duration-300">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-white">
-              <Globe className="h-5 w-5 text-neon-cyan animate-pulse-soft" />
-              Text Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Arabic Text to Analyze</label>
-              <Textarea
-                placeholder="أدخل النص العربي هنا..."
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                className="min-h-32 resize-none bg-white/5 border-white/20 text-white placeholder:text-gray-400 transition-all duration-200 hover:border-neon-cyan focus:border-neon-cyan backdrop-blur-sm"
-                dir="rtl"
-              />
+        <div className="relative z-10 max-w-5xl mx-auto p-8 space-y-12">
+          {/* Professional Header */}
+          <div className="text-center space-y-8 animate-fade-in">
+            <div className="flex justify-center">
+              <div className="relative p-6 rounded-3xl bg-gradient-primary shadow-glow backdrop-blur-lg border border-white/10">
+                <Languages className="h-12 w-12 text-white animate-float" />
+                <div className="absolute inset-0 bg-gradient-secondary rounded-3xl blur opacity-30 -z-10 animate-gradient-shift"></div>
+              </div>
             </div>
+            <div className="space-y-4">
+              <h1 className="text-6xl font-extrabold text-transparent bg-gradient-primary bg-clip-text leading-tight">
+                Arabic Dialect Identifier
+              </h1>
+              <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
+                Professional AI-powered Arabic dialect classification with enterprise-grade accuracy
+              </p>
+            </div>
+            <div className="flex justify-center gap-8 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <span>4 Dialect Types</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="h-4 w-4 text-accent" />
+                <span>Real-time Analysis</span>
+              </div>
+            </div>
+          </div>
 
-            <Button 
-              onClick={handleAnalyze}
-              disabled={isAnalyzing || !text.trim()}
-              size="lg"
-              className="w-full bg-gradient-primary hover:bg-gradient-secondary border-0 text-white font-bold py-3 rounded-xl transform transition-all duration-200 hover:scale-105 active:scale-95 shadow-neon disabled:opacity-50 disabled:hover:scale-100"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Analyzing...
-                </>
-              ) : (
-                "🚀 Analyze Dialect"
-              )}
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Results Section */}
-        {results.length > 0 && (
-          <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass animate-scale-in">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-gradient-primary animate-pulse-soft"></div>
-                ✨ Classification Results
+          {/* Professional Input Section */}
+          <Card 
+            className="card-professional animate-scale-in"
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+          >
+            <CardHeader className="pb-6">
+              <CardTitle className="flex items-center gap-3 text-foreground text-xl">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Globe className="h-5 w-5 text-primary" />
+                </div>
+                Text Analysis
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {results.map((result, index) => (
-                <div 
-                  key={index}
-                  className="relative overflow-hidden p-6 backdrop-blur-sm bg-gradient-glass rounded-xl border border-white/20 hover:shadow-neon transition-all duration-300 hover:scale-[1.02] animate-fade-in group"
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                  <div className="relative flex items-start justify-between">
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-bold text-xl text-white">{result.dialect}</h3>
-                        <Badge 
-                          className={`${getConfidenceColor(result.confidence)} text-white font-bold px-3 py-1 rounded-full animate-scale-in shadow-lg`}
-                          style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
-                        >
-                          {getConfidenceLabel(result.confidence, index === 0, results)} Confidence
-                        </Badge>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
+                  <span>Arabic Text Input</span>
+                  <span className="text-xs text-muted-foreground">(Required)</span>
+                </label>
+                <Textarea
+                  placeholder="أدخل النص العربي هنا للتحليل..."
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  className="min-h-40 resize-none bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm text-lg leading-relaxed"
+                  dir="rtl"
+                />
+              </div>
+
+              <Button 
+                onClick={handleAnalyze}
+                disabled={isAnalyzing || !text.trim()}
+                size="lg"
+                className="btn-professional w-full py-4 text-lg font-semibold rounded-xl"
+                onMouseEnter={() => setIsHovering(true)}
+                onMouseLeave={() => setIsHovering(false)}
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin mr-3" />
+                    Analyzing Dialect...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-5 w-5 mr-3" />
+                    Analyze Arabic Dialect
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Professional Results Section */}
+          {results.length > 0 && (
+            <Card className="card-professional animate-scale-in">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-foreground text-xl flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-success/10">
+                    <div className="w-3 h-3 rounded-full bg-success animate-pulse" />
+                  </div>
+                  Classification Results
+                  <Badge variant="secondary" className="ml-auto">
+                    {results.length} Match{results.length > 1 ? 'es' : ''}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {results.map((result, index) => (
+                  <div 
+                    key={index}
+                    className="relative overflow-hidden p-6 bg-muted/30 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] animate-fade-in group"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                    onMouseEnter={() => setIsHovering(true)}
+                    onMouseLeave={() => setIsHovering(false)}
+                  >
+                    <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl" />
+                    <div className="relative flex items-start justify-between">
+                      <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-4">
+                          <h3 className="font-bold text-2xl text-foreground">{result.dialect}</h3>
+                          <Badge 
+                            className={`${getConfidenceColor(result.confidence)} font-bold px-4 py-2 rounded-full text-sm shadow-lg`}
+                          >
+                            {getConfidenceLabel(result.confidence, index === 0, results)} Confidence
+                          </Badge>
+                        </div>
+                        <p className="text-muted-foreground leading-relaxed">{result.description}</p>
                       </div>
-                      <p className="text-gray-300 text-sm leading-relaxed">{result.description}</p>
-                    </div>
-                    <div className="text-right ml-6">
-                      <div className="text-3xl font-black text-transparent bg-gradient-primary bg-clip-text animate-scale-in" 
-                           style={{ animationDelay: `${index * 0.1 + 0.3}s` }}>
-                        {(result.confidence * 100).toFixed(1)}%
-                      </div>
-                      <div className="w-28 bg-white/20 rounded-full h-3 mt-2 overflow-hidden backdrop-blur-sm">
-                        <div 
-                          className="bg-gradient-primary h-3 rounded-full transition-all duration-1000 ease-out animate-slide-up shadow-glow"
-                          style={{ 
-                            width: `${result.confidence * 100}%`,
-                            animationDelay: `${index * 0.1 + 0.5}s`
-                          }}
-                        />
+                      <div className="text-right ml-8 space-y-3">
+                        <div className="text-4xl font-black text-transparent bg-gradient-primary bg-clip-text">
+                          {(result.confidence * 100).toFixed(1)}%
+                        </div>
+                        <div className="w-32 bg-muted rounded-full h-4 overflow-hidden shadow-inner">
+                          <div 
+                            className="bg-gradient-primary h-4 rounded-full transition-all duration-1000 ease-out shadow-glow"
+                            style={{ 
+                              width: `${result.confidence * 100}%`,
+                              animationDelay: `${index * 0.1 + 0.5}s`
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
-        )}
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Feedback Section */}
-        {showFeedback && results.length > 0 && (
-          <div className="animate-scale-in" style={{ animationDelay: '0.5s' }}>
-            <FeedbackForm
-              text={text}
-              language="arabic"
-              results={results}
-              onFeedbackSubmitted={handleFeedbackSubmitted}
-            />
-          </div>
-        )}
+          {/* Professional Feedback Section */}
+          {showFeedback && results.length > 0 && (
+            <div className="animate-scale-in" style={{ animationDelay: '0.6s' }}>
+              <FeedbackForm
+                text={text}
+                language="arabic"
+                results={results}
+                onFeedbackSubmitted={handleFeedbackSubmitted}
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

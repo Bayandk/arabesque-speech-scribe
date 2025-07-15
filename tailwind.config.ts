@@ -26,6 +26,7 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
+					variant: 'hsl(var(--primary-variant))',
 					foreground: 'hsl(var(--primary-foreground))'
 				},
 				secondary: {
@@ -42,6 +43,8 @@ export default {
 				},
 				accent: {
 					DEFAULT: 'hsl(var(--accent))',
+					secondary: 'hsl(var(--accent-secondary))',
+					tertiary: 'hsl(var(--accent-tertiary))',
 					foreground: 'hsl(var(--accent-foreground))'
 				},
 				popover: {
@@ -52,20 +55,8 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				academic: {
-					blue: 'hsl(var(--academic-blue))',
-					'blue-light': 'hsl(var(--academic-blue-light))',
-					'blue-dark': 'hsl(var(--academic-blue-dark))',
-					gray: 'hsl(var(--academic-gray))',
-					'gray-light': 'hsl(var(--academic-gray-light))'
-				},
-				neon: {
-					purple: 'hsl(var(--neon-purple))',
-					cyan: 'hsl(var(--neon-cyan))',
-					pink: 'hsl(var(--neon-pink))',
-					blue: 'hsl(var(--electric-blue))',
-					green: 'hsl(var(--lime-green))'
-				},
+				success: 'hsl(var(--success))',
+				warning: 'hsl(var(--warning))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
