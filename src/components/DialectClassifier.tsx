@@ -60,7 +60,7 @@ const DialectClassifier = () => {
           "text-classification",
           "CAMeL-Lab/bert-base-arabic-camelbert-da",
           { 
-            device: "cpu"
+            device: "wasm"
           }
         );
         modelsRef.current.arabic = classifier;
