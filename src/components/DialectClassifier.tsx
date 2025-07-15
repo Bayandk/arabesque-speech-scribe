@@ -51,13 +51,13 @@ const DialectClassifier = () => {
       algerian: ["راني", "كيما", "تاع", "ولاّ", "برك", "حتى", "نشوف", "شرايك", "وين", "كاين", "مكانش", "بصح"],
       tunisian: ["آش", "حكاية", "فمّة", "برشا", "بالله", "توّا", "شنيّة", "كيفاش", "وقتاش", "فمّة", "موش"],
       
-      // Specific Gulf dialects
-      saudi_najdi: ["وش", "ليش", "عاد", "زين", "أبي", "شنو", "وين", "يا ذيب", "علي", "مره", "خوي"],
-      saudi_hijazi: ["إيش", "وش", "كدا", "زي كدا", "يا عمي", "حبيبي", "خوي", "دحين", "ايوه"],
-      emirati: ["شلونك", "شلون", "ثاني", "بعدين", "واجد", "ماشي", "زين", "خلاص", "دبي", "يالله"],
-      kuwaiti: ["شلونك", "شنو", "شكو", "ماكو", "جان", "عادي", "زين", "خلاص", "شدعوى", "لول"],
-      bahraini: ["شلونك", "شنو", "كيف", "زين", "واجد", "خلاص", "شداعي", "جان", "ماشي"],
-      omani: ["شلونك", "شنو", "كيف", "زين", "واجد", "خلاص", "بعدين", "ماشي", "عسى"]
+      // Improved Gulf dialects based on your dataset
+      saudi_najdi: ["وش", "ليه", "هالحين", "عقب", "توه", "أبد", "واجد", "هقوتك", "وش السالفة؟", "وينك توك؟"],
+      saudi_hijazi: ["إيش", "فين", "مرّة", "لسه", "أبغا", "دا", "دي", "بالله", "طيب", "حقتك", "فين رايح؟"],
+      emirati: ["شو", "ليش", "صوب", "وايد", "مب", "عقب", "جي", "دامه", "تراني", "شو حالك؟"],
+      bahraini: ["شنو", "ليش", "عدل", "جذي", "زود", "عبالك", "ما عليه", "خوش", "بسك", "كلش ما فهمت"],
+      omani: ["ويش", "حين", "ما عليه", "توّه", "هينك", "سيدا", "من صوبك", "شو تسوي؟", "زين", "عندي شغل واجد"],
+      kuwaiti: ["شفيك؟", "خوش", "جان زين", "ماكو", "صج؟", "كلش", "عبالك", "يبه", "هاك", "شكو؟"]
     };
 
     const dialectMappings = {
@@ -88,12 +88,20 @@ const DialectClassifier = () => {
       omani: 0
     };
 
-    // Enhanced scoring with weighted keywords
+    // Enhanced scoring with phrase matching and weighted keywords  
     Object.entries(keywords).forEach(([dialect, words]) => {
       words.forEach((word, index) => {
         if (text.includes(word)) {
-          // Weight rare/distinctive words higher (first few words are usually more distinctive)
-          const weight = index < 3 ? 0.6 : index < 6 ? 0.4 : 0.3;
+          // Phrases (containing spaces or ?) get higher weight
+          const isPhrase = word.includes(' ') || word.includes('؟');
+          // First keywords are usually more distinctive
+          const isDistinctive = index < 4;
+          
+          let weight = 0.3;
+          if (isPhrase) weight = 0.8;  // Phrases are very distinctive
+          else if (isDistinctive) weight = 0.6;  // First keywords are distinctive
+          else if (index < 7) weight = 0.4;  // Middle keywords
+          
           scores[dialect as keyof typeof scores] += weight;
         }
       });
