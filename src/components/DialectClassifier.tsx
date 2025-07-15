@@ -16,17 +16,16 @@ interface ClassificationResult {
 
 const DialectClassifier = () => {
   const [text, setText] = useState("");
-  const [language, setLanguage] = useState("arabic");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ClassificationResult[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
   const { toast } = useToast();
 
   // Real classification function using Supabase Edge Function
-  const classifyDialect = async (inputText: string, selectedLanguage: string): Promise<ClassificationResult[]> => {
+  const classifyDialect = async (inputText: string): Promise<ClassificationResult[]> => {
     try {
       const { data, error } = await supabase.functions.invoke('classify-dialect', {
-        body: { text: inputText, language: selectedLanguage }
+        body: { text: inputText, language: "arabic" }
       });
 
       if (error) {
@@ -37,12 +36,8 @@ const DialectClassifier = () => {
       return data.results || [];
     } catch (error) {
       console.error("Classification error:", error);
-      // Fallback to keyword-based classification
-      if (selectedLanguage === "arabic") {
-        return classifyArabicByKeywords(inputText);
-      } else {
-        return classifyEnglishByKeywords(inputText);
-      }
+      // Fallback to keyword-based classification for Arabic
+      return classifyArabicByKeywords(inputText);
     }
   };
 
@@ -95,44 +90,6 @@ const DialectClassifier = () => {
     }];
   };
 
-  // Keyword-based classification for English
-  const classifyEnglishByKeywords = (text: string): ClassificationResult[] => {
-    const keywords = {
-      american: ["color", "theater", "center", "aluminum", "mom", "gas", "truck", "elevator"],
-      british: ["colour", "theatre", "centre", "aluminium", "mum", "petrol", "lorry", "lift"],
-      australian: ["mate", "bloke", "arvo", "brekkie", "mozzie", "barbie", "ute"],
-      canadian: ["eh", "toque", "loonie", "double-double", "chesterfield"]
-    };
-
-    const scores = {
-      american: 0.3, // Default baseline for American
-      british: 0,
-      australian: 0,
-      canadian: 0
-    };
-
-    const lowerText = text.toLowerCase();
-    
-    Object.entries(keywords).forEach(([dialect, words]) => {
-      words.forEach(word => {
-        if (lowerText.includes(word.toLowerCase())) {
-          scores[dialect as keyof typeof scores] += 0.4;
-        }
-      });
-    });
-
-    const results = [
-      { dialect: "American English", confidence: scores.american, description: "Standard American pronunciation and vocabulary" },
-      { dialect: "British English", confidence: scores.british || 0.2, description: "Received Pronunciation and British vocabulary" },
-      { dialect: "Australian English", confidence: scores.australian || 0.1, description: "Distinctive Australian accent and expressions" },
-      { dialect: "Canadian English", confidence: scores.canadian || 0.1, description: "Canadian pronunciation with some British influences" }
-    ]
-      .filter(result => result.confidence > 0.05)
-      .sort((a, b) => b.confidence - a.confidence)
-      .slice(0, 3);
-
-    return results;
-  };
 
   const handleAnalyze = async () => {
     if (!text.trim()) {
@@ -147,7 +104,7 @@ const DialectClassifier = () => {
     setIsAnalyzing(true);
     setShowFeedback(false); // Hide feedback form when analyzing
     try {
-      const classificationResults = await classifyDialect(text, language);
+      const classificationResults = await classifyDialect(text);
       setResults(classificationResults);
       setShowFeedback(true); // Show feedback form after results
       
@@ -212,10 +169,10 @@ const DialectClassifier = () => {
             </div>
           </div>
           <h1 className="text-5xl font-black text-transparent bg-gradient-primary bg-clip-text animate-gradient-shift bg-300%">
-            Dialect Identifier
+            Arabic Dialect Identifier
           </h1>
           <p className="text-gray-300 text-xl max-w-2xl mx-auto font-medium">
-            AI-powered dialect classification with 🔥 accuracy
+            AI-powered Arabic dialect classification with 🔥 accuracy
           </p>
         </div>
 
@@ -229,29 +186,13 @@ const DialectClassifier = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Language</label>
-              <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-full bg-white/5 border-white/20 text-white transition-all duration-200 hover:border-neon-cyan focus:border-neon-cyan backdrop-blur-sm">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent className="bg-gray-900/95 border-white/20 backdrop-blur-lg">
-                  <SelectItem value="arabic" className="text-white hover:bg-white/10">Arabic</SelectItem>
-                  <SelectItem value="english" className="text-white hover:bg-white/10">English</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Text to Analyze</label>
+              <label className="text-sm font-medium text-gray-200">Arabic Text to Analyze</label>
               <Textarea
-                placeholder={language === "arabic" 
-                  ? "أدخل النص العربي هنا..." 
-                  : "Enter your English text here..."
-                }
+                placeholder="أدخل النص العربي هنا..."
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 className="min-h-32 resize-none bg-white/5 border-white/20 text-white placeholder:text-gray-400 transition-all duration-200 hover:border-neon-cyan focus:border-neon-cyan backdrop-blur-sm"
-                dir={language === "arabic" ? "rtl" : "ltr"}
+                dir="rtl"
               />
             </div>
 
@@ -330,7 +271,7 @@ const DialectClassifier = () => {
           <div className="animate-scale-in" style={{ animationDelay: '0.5s' }}>
             <FeedbackForm
               text={text}
-              language={language}
+              language="arabic"
               results={results}
               onFeedbackSubmitted={handleFeedbackSubmitted}
             />
