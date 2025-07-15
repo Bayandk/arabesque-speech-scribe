@@ -106,44 +106,7 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    cursor: none; /* Hide default cursor */
     overflow-x: hidden;
-  }
-  
-  /* Custom Professional Cursor */
-  .custom-cursor {
-    position: fixed;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(45deg, hsl(217 91% 60%), hsl(168 76% 42%));
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transition: all 0.15s ease;
-    box-shadow: 0 0 20px hsl(217 91% 60% / 0.4);
-    opacity: 0.9;
-  }
-  
-  .custom-cursor-trail {
-    position: fixed;
-    width: 8px;
-    height: 8px;
-    background: hsl(230 85% 65% / 0.6);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9998;
-    transition: all 0.2s ease;
-  }
-  
-  .cursor-hover {
-    transform: scale(1.5);
-    background: linear-gradient(45deg, hsl(168 76% 42%), hsl(193 82% 31%));
-    box-shadow: 0 0 30px hsl(168 76% 42% / 0.6);
-  }
-  
-  .cursor-click {
-    transform: scale(0.8);
-    background: linear-gradient(45deg, hsl(284 85% 70%), hsl(217 91% 60%));
   }
 }
 

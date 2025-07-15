@@ -18,19 +18,7 @@ const DialectClassifier = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ClassificationResult[]>([]);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
-
-  // Custom cursor tracking
-  useEffect(() => {
-    const updateCursor = (e: MouseEvent) => {
-      setCursorPosition({ x: e.clientX, y: e.clientY });
-    };
-
-    document.addEventListener('mousemove', updateCursor);
-    return () => document.removeEventListener('mousemove', updateCursor);
-  }, []);
 
   // Real classification function using Supabase Edge Function
   const classifyDialect = async (inputText: string): Promise<ClassificationResult[]> => {
@@ -162,24 +150,7 @@ const DialectClassifier = () => {
   };
 
   return (
-    <>
-      {/* Custom Cursor */}
-      <div 
-        className={`custom-cursor ${isHovering ? 'cursor-hover' : ''}`}
-        style={{
-          left: cursorPosition.x - 10,
-          top: cursorPosition.y - 10,
-        }}
-      />
-      <div 
-        className="custom-cursor-trail"
-        style={{
-          left: cursorPosition.x - 4,
-          top: cursorPosition.y - 4,
-        }}
-      />
-
-      <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-hero relative overflow-hidden">
         {/* Professional animated background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"></div>
@@ -217,11 +188,7 @@ const DialectClassifier = () => {
           </div>
 
           {/* Professional Input Section */}
-          <Card 
-            className="card-professional animate-scale-in"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-          >
+          <Card className="card-professional animate-scale-in">
             <CardHeader className="pb-6">
               <CardTitle className="flex items-center gap-3 text-foreground text-xl">
                 <div className="p-2 rounded-lg bg-primary/10">
@@ -250,8 +217,6 @@ const DialectClassifier = () => {
                 disabled={isAnalyzing || !text.trim()}
                 size="lg"
                 className="btn-professional w-full py-4 text-lg font-semibold rounded-xl"
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
               >
                 {isAnalyzing ? (
                   <>
@@ -288,8 +253,6 @@ const DialectClassifier = () => {
                     key={index}
                     className="relative overflow-hidden p-6 bg-muted/30 rounded-2xl border border-border/50 hover:border-primary/30 transition-all duration-300 hover:scale-[1.01] animate-fade-in group"
                     style={{ animationDelay: `${index * 0.15}s` }}
-                    onMouseEnter={() => setIsHovering(true)}
-                    onMouseLeave={() => setIsHovering(false)}
                   >
                     <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-300 rounded-2xl" />
                     <div className="relative flex items-start justify-between">
@@ -338,7 +301,6 @@ const DialectClassifier = () => {
           )}
         </div>
       </div>
-    </>
   );
 };
 
