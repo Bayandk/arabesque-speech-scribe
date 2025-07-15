@@ -158,59 +158,24 @@ const DialectClassifier = () => {
           <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-accent-secondary/5 rounded-full blur-3xl animate-float delay-2000"></div>
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto p-8 space-y-12">
-          {/* Professional Header */}
-          <div className="text-center space-y-8 animate-fade-in">
-            <div className="flex justify-center">
-              <div className="relative p-6 rounded-3xl bg-gradient-primary shadow-glow backdrop-blur-lg border border-white/10">
-                <Languages className="h-12 w-12 text-white animate-float" />
-                <div className="absolute inset-0 bg-gradient-secondary rounded-3xl blur opacity-30 -z-10 animate-gradient-shift"></div>
-              </div>
-            </div>
-            <div className="space-y-4">
-              <h1 className="text-6xl font-extrabold text-transparent bg-gradient-primary bg-clip-text leading-tight">
-                Arabic Dialect Identifier
-              </h1>
-              <p className="text-muted-foreground text-xl max-w-3xl mx-auto leading-relaxed">
-                Professional AI-powered Arabic dialect classification with enterprise-grade accuracy
-              </p>
-            </div>
-            <div className="flex justify-center gap-8 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <span>4 Dialect Types</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Globe className="h-4 w-4 text-accent" />
-                <span>Real-time Analysis</span>
-              </div>
-            </div>
+        <div className="relative z-10 max-w-4xl mx-auto p-8 space-y-8">
+          {/* Simple Header */}
+          <div className="text-center space-y-6 animate-fade-in">
+            <h1 className="text-4xl font-bold text-transparent bg-gradient-primary bg-clip-text">
+              AI-powered Arabic dialect classification
+            </h1>
           </div>
 
-          {/* Professional Input Section */}
+          {/* Simple Input Section */}
           <Card className="card-professional animate-scale-in">
-            <CardHeader className="pb-6">
-              <CardTitle className="flex items-center gap-3 text-foreground text-xl">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <Globe className="h-5 w-5 text-primary" />
-                </div>
-                Text Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <span>Arabic Text Input</span>
-                  <span className="text-xs text-muted-foreground">(Required)</span>
-                </label>
-                <Textarea
-                  placeholder="أدخل النص العربي هنا للتحليل..."
-                  value={text}
-                  onChange={(e) => setText(e.target.value)}
-                  className="min-h-40 resize-none bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm text-lg leading-relaxed"
-                  dir="rtl"
-                />
-              </div>
+            <CardContent className="space-y-6 pt-6">
+              <Textarea
+                placeholder="أدخل النص هنا"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="min-h-32 resize-none bg-muted/50 border-border text-foreground placeholder:text-muted-foreground transition-all duration-300 hover:border-primary/50 focus:border-primary backdrop-blur-sm text-lg"
+                dir="rtl"
+              />
 
               <Button 
                 onClick={handleAnalyze}
@@ -221,13 +186,10 @@ const DialectClassifier = () => {
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="h-5 w-5 animate-spin mr-3" />
-                    Analyzing Dialect...
+                    Analyzing...
                   </>
                 ) : (
-                  <>
-                    <Sparkles className="h-5 w-5 mr-3" />
-                    Analyze Arabic Dialect
-                  </>
+                  "Analyze"
                 )}
               </Button>
             </CardContent>
