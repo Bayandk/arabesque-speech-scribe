@@ -8,69 +8,75 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 215 25% 27%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 27%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 27%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 213 93% 67%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 215 25% 27%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 214 32% 91%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 213 93% 67%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 195 100% 50%;
+    --accent-foreground: 240 10% 3.9%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 214 32% 91%;
-    --input: 0 0% 100%;
-    --ring: 213 93% 67%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 70% 50%;
 
     --radius: 0.75rem;
 
-    /* Academic color palette */
-    --academic-blue: 213 93% 67%;
-    --academic-blue-light: 213 93% 85%;
-    --academic-blue-dark: 213 93% 45%;
-    --academic-gray: 215 20% 65%;
-    --academic-gray-light: 214 32% 91%;
+    /* Gen Z color palette */
+    --neon-purple: 263 70% 50%;
+    --neon-cyan: 195 100% 50%;
+    --neon-pink: 330 85% 60%;
+    --electric-blue: 220 100% 60%;
+    --lime-green: 90 100% 50%;
+    
+    /* Academic color palette - Gen Z style */
+    --academic-blue: 220 100% 60%;
+    --academic-blue-light: 220 100% 75%;
+    --academic-blue-dark: 220 100% 45%;
+    --academic-gray: 240 5% 64.9%;
+    --academic-gray-light: 240 3.7% 15.9%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(var(--academic-blue)), hsl(var(--academic-blue-light)));
-    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--academic-gray-light)));
+    /* Modern gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--neon-purple)), hsl(var(--neon-cyan)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--neon-pink)), hsl(var(--electric-blue)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(240 3.7% 8%));
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    --gradient-accent: linear-gradient(45deg, hsl(var(--neon-cyan)), hsl(var(--lime-green)));
 
-    /* Shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--academic-blue) / 0.2);
-    --shadow-glow: 0 0 40px hsl(var(--academic-blue-light) / 0.3);
+    /* Glassmorphism shadows */
+    --shadow-elegant: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    --shadow-glow: 0 0 40px hsl(var(--neon-purple) / 0.5);
+    --shadow-neon: 0 0 20px hsl(var(--neon-cyan) / 0.6);
+    --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
 
-    /* Animations */
+    /* Smooth animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 263 70% 50%;
     --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 263 70% 50%;
   }
 
   .dark {

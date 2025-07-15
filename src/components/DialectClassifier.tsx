@@ -194,134 +194,149 @@ const DialectClassifier = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-4 animate-fade-in">
-        <div className="flex justify-center">
-          <div className="p-3 rounded-full bg-gradient-primary shadow-glow animate-glow-pulse">
-            <Languages className="h-8 w-8 text-white animate-bounce-gentle" />
-          </div>
-        </div>
-        <h1 className="text-4xl font-bold text-foreground animate-slide-up">Dialect Identifier</h1>
-        <p className="text-academic-gray text-lg max-w-2xl mx-auto animate-slide-up delay-100">
-          Analyze and classify the dialect of Arabic or English text using advanced natural language processing
-        </p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-slate-900 to-purple-900/20 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-neon-purple/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-neon-cyan/20 rounded-full blur-3xl animate-float delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-neon-pink/10 rounded-full blur-3xl animate-float delay-2000"></div>
       </div>
 
-      {/* Input Section */}
-      <Card className="shadow-elegant animate-scale-in hover:shadow-glow transition-all duration-300">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-academic-blue animate-pulse-soft" />
-            Text Analysis
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Language</label>
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-full transition-all duration-200 hover:border-academic-blue focus:border-academic-blue">
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="arabic">Arabic</SelectItem>
-                <SelectItem value="english">English</SelectItem>
-              </SelectContent>
-            </Select>
+      <div className="relative z-10 max-w-4xl mx-auto p-6 space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-6 animate-fade-in">
+          <div className="flex justify-center">
+            <div className="relative p-4 rounded-2xl bg-gradient-primary shadow-glow animate-glow-pulse backdrop-blur-sm">
+              <Languages className="h-10 w-10 text-white animate-float" />
+              <div className="absolute inset-0 bg-gradient-accent rounded-2xl blur opacity-50 -z-10 animate-gradient-shift bg-300%"></div>
+            </div>
           </div>
+          <h1 className="text-5xl font-black text-transparent bg-gradient-primary bg-clip-text animate-gradient-shift bg-300%">
+            Dialect Identifier
+          </h1>
+          <p className="text-gray-300 text-xl max-w-2xl mx-auto font-medium">
+            AI-powered dialect classification with 🔥 accuracy
+          </p>
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">Text to Analyze</label>
-            <Textarea
-              placeholder={language === "arabic" 
-                ? "أدخل النص العربي هنا..." 
-                : "Enter your English text here..."
-              }
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="min-h-32 resize-none transition-all duration-200 hover:border-academic-blue focus:border-academic-blue"
-              dir={language === "arabic" ? "rtl" : "ltr"}
-            />
-          </div>
-
-          <Button 
-            onClick={handleAnalyze}
-            disabled={isAnalyzing || !text.trim()}
-            variant="analyze"
-            size="lg"
-            className="w-full transform transition-all duration-200 hover:scale-105 active:scale-95"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                Analyzing...
-              </>
-            ) : (
-              "Analyze Dialect"
-            )}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Results Section */}
-      {results.length > 0 && (
-        <Card className="shadow-elegant animate-scale-in">
+        {/* Input Section */}
+        <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass animate-scale-in hover:shadow-neon transition-all duration-300">
           <CardHeader>
-            <CardTitle className="text-academic-blue flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-academic-blue animate-pulse-soft"></div>
-              Classification Results
+            <CardTitle className="flex items-center gap-2 text-white">
+              <Globe className="h-5 w-5 text-neon-cyan animate-pulse-soft" />
+              Text Analysis
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {results.map((result, index) => (
-              <div 
-                key={index}
-                className="flex items-start justify-between p-4 bg-gradient-subtle rounded-lg border border-border hover:shadow-md transition-all duration-300 hover:scale-[1.02] animate-fade-in"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-lg text-foreground">{result.dialect}</h3>
-                    <Badge 
-                      variant="secondary" 
-                      className={`${getConfidenceColor(result.confidence)} text-white animate-scale-in`}
-                      style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
-                    >
-                      {getConfidenceLabel(result.confidence, index === 0, results)} Confidence
-                    </Badge>
-                  </div>
-                  <p className="text-academic-gray text-sm">{result.description}</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-academic-blue animate-scale-in" 
-                       style={{ animationDelay: `${index * 0.1 + 0.3}s` }}>
-                    {(result.confidence * 100).toFixed(1)}%
-                  </div>
-                  <div className="w-24 bg-academic-gray-light rounded-full h-2 mt-1 overflow-hidden">
-                    <div 
-                      className="bg-gradient-primary h-2 rounded-full transition-all duration-1000 ease-out animate-slide-up"
-                      style={{ 
-                        width: `${result.confidence * 100}%`,
-                        animationDelay: `${index * 0.1 + 0.5}s`
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-200">Language</label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-full bg-white/5 border-white/20 text-white transition-all duration-200 hover:border-neon-cyan focus:border-neon-cyan backdrop-blur-sm">
+                  <SelectValue placeholder="Select language" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-900/95 border-white/20 backdrop-blur-lg">
+                  <SelectItem value="arabic" className="text-white hover:bg-white/10">Arabic</SelectItem>
+                  <SelectItem value="english" className="text-white hover:bg-white/10">English</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-200">Text to Analyze</label>
+              <Textarea
+                placeholder={language === "arabic" 
+                  ? "أدخل النص العربي هنا..." 
+                  : "Enter your English text here..."
+                }
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="min-h-32 resize-none bg-white/5 border-white/20 text-white placeholder:text-gray-400 transition-all duration-200 hover:border-neon-cyan focus:border-neon-cyan backdrop-blur-sm"
+                dir={language === "arabic" ? "rtl" : "ltr"}
+              />
+            </div>
+
+            <Button 
+              onClick={handleAnalyze}
+              disabled={isAnalyzing || !text.trim()}
+              size="lg"
+              className="w-full bg-gradient-primary hover:bg-gradient-secondary border-0 text-white font-bold py-3 rounded-xl transform transition-all duration-200 hover:scale-105 active:scale-95 shadow-neon disabled:opacity-50 disabled:hover:scale-100"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Analyzing...
+                </>
+              ) : (
+                "🚀 Analyze Dialect"
+              )}
+            </Button>
           </CardContent>
         </Card>
-      )}
 
-      {/* Feedback Section */}
-      {showFeedback && results.length > 0 && (
-        <FeedbackForm
-          text={text}
-          language={language}
-          results={results}
-          onFeedbackSubmitted={handleFeedbackSubmitted}
-        />
-      )}
+        {/* Results Section */}
+        {results.length > 0 && (
+          <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass animate-scale-in">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-gradient-primary animate-pulse-soft"></div>
+                ✨ Classification Results
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {results.map((result, index) => (
+                <div 
+                  key={index}
+                  className="relative overflow-hidden p-6 backdrop-blur-sm bg-gradient-glass rounded-xl border border-white/20 hover:shadow-neon transition-all duration-300 hover:scale-[1.02] animate-fade-in group"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-accent opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                  <div className="relative flex items-start justify-between">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-bold text-xl text-white">{result.dialect}</h3>
+                        <Badge 
+                          className={`${getConfidenceColor(result.confidence)} text-white font-bold px-3 py-1 rounded-full animate-scale-in shadow-lg`}
+                          style={{ animationDelay: `${index * 0.1 + 0.2}s` }}
+                        >
+                          {getConfidenceLabel(result.confidence, index === 0, results)} Confidence
+                        </Badge>
+                      </div>
+                      <p className="text-gray-300 text-sm leading-relaxed">{result.description}</p>
+                    </div>
+                    <div className="text-right ml-6">
+                      <div className="text-3xl font-black text-transparent bg-gradient-primary bg-clip-text animate-scale-in" 
+                           style={{ animationDelay: `${index * 0.1 + 0.3}s` }}>
+                        {(result.confidence * 100).toFixed(1)}%
+                      </div>
+                      <div className="w-28 bg-white/20 rounded-full h-3 mt-2 overflow-hidden backdrop-blur-sm">
+                        <div 
+                          className="bg-gradient-primary h-3 rounded-full transition-all duration-1000 ease-out animate-slide-up shadow-glow"
+                          style={{ 
+                            width: `${result.confidence * 100}%`,
+                            animationDelay: `${index * 0.1 + 0.5}s`
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Feedback Section */}
+        {showFeedback && results.length > 0 && (
+          <div className="animate-scale-in" style={{ animationDelay: '0.5s' }}>
+            <FeedbackForm
+              text={text}
+              language={language}
+              results={results}
+              onFeedbackSubmitted={handleFeedbackSubmitted}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

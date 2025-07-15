@@ -102,19 +102,19 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
   if (results.length === 0) return null;
 
   return (
-    <Card className="shadow-elegant border-l-4 border-l-blue-500">
+    <Card className="backdrop-blur-lg bg-white/10 border border-white/20 shadow-glass border-l-4 border-l-neon-purple">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg text-academic-blue">
-          How accurate was this classification?
+        <CardTitle className="text-lg text-white flex items-center gap-2">
+          💫 Rate This Classification
         </CardTitle>
-        <p className="text-sm text-academic-gray">
-          Your feedback helps improve the dialect classifier for everyone
+        <p className="text-sm text-gray-300">
+          Your feedback helps improve the dialect classifier for everyone ✨
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Quick Correct/Incorrect buttons */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">
+          <label className="text-sm font-medium text-white">
             Was the classification correct?
           </label>
           <div className="flex gap-3">
@@ -122,36 +122,60 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
               variant={isCorrect === true ? "default" : "outline"}
               size="sm"
               onClick={() => setIsCorrect(true)}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 transition-all duration-200 ${
+                isCorrect === true 
+                  ? "bg-gradient-primary text-white shadow-neon" 
+                  : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+              }`}
             >
               <ThumbsUp className="h-4 w-4" />
-              Correct
+              ✅ Correct
             </Button>
             <Button
               variant={isCorrect === false ? "default" : "outline"}
               size="sm"
               onClick={() => setIsCorrect(false)}
-              className="flex items-center gap-2"
+              className={`flex items-center gap-2 transition-all duration-200 ${
+                isCorrect === false 
+                  ? "bg-gradient-secondary text-white shadow-neon" 
+                  : "bg-white/10 border-white/20 text-white hover:bg-white/20"
+              }`}
             >
               <ThumbsDown className="h-4 w-4" />
-              Incorrect
+              ❌ Incorrect
             </Button>
           </div>
         </div>
 
         {/* Star rating */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">
+          <label className="text-sm font-medium text-white">
             Rate the overall quality (optional)
           </label>
           <div className="flex items-center gap-3">
-            <StarRating />
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className="transition-all duration-200 hover:scale-110"
+                >
+                  <Star
+                    className={`h-6 w-6 transition-colors ${
+                      star <= rating 
+                        ? "fill-neon-cyan text-neon-cyan drop-shadow-lg" 
+                        : "text-gray-400 hover:text-neon-cyan/50"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
             {rating > 0 && (
-              <span className="text-sm text-academic-gray">
-                {rating === 1 ? "Poor" : 
-                 rating === 2 ? "Fair" : 
-                 rating === 3 ? "Good" : 
-                 rating === 4 ? "Very Good" : "Excellent"}
+              <span className="text-sm text-gray-300 font-medium">
+                {rating === 1 ? "😞 Poor" : 
+                 rating === 2 ? "😐 Fair" : 
+                 rating === 3 ? "😊 Good" : 
+                 rating === 4 ? "😄 Very Good" : "🤩 Excellent"}
               </span>
             )}
           </div>
@@ -159,24 +183,23 @@ const FeedbackForm = ({ text, language, results, onFeedbackSubmitted }: Feedback
 
         {/* Comment */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-foreground">
+          <label className="text-sm font-medium text-white">
             Additional comments (optional)
           </label>
           <Textarea
             placeholder="Any additional feedback about the classification..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="min-h-20"
+            className="min-h-20 bg-white/5 border-white/20 text-white placeholder:text-gray-400 backdrop-blur-sm"
           />
         </div>
 
         <Button 
           onClick={handleSubmitFeedback}
           disabled={isSubmitting || (rating === 0 && isCorrect === null)}
-          className="w-full"
-          variant="secondary"
+          className="w-full bg-gradient-accent hover:bg-gradient-primary text-white font-bold py-3 rounded-xl transition-all duration-200 hover:scale-105 shadow-neon disabled:opacity-50"
         >
-          {isSubmitting ? "Submitting..." : "Submit Feedback"}
+          {isSubmitting ? "⏳ Submitting..." : "🚀 Submit Feedback"}
         </Button>
       </CardContent>
     </Card>
