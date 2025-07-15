@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Languages, Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { pipeline } from "@huggingface/transformers";
+import { supabase } from "@/integrations/supabase/client";
 
 interface ClassificationResult {
   dialect: string;
@@ -19,98 +19,21 @@ const DialectClassifier = () => {
   const [language, setLanguage] = useState("arabic");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [results, setResults] = useState<ClassificationResult[]>([]);
-  const [isLoadingModel, setIsLoadingModel] = useState(false);
   const { toast } = useToast();
-  
-  // Cache for loaded models
-  const modelsRef = useRef<{
-    arabic?: any;
-    english?: any;
-  }>({});
 
-  // Dialect mappings for different languages
-  const dialectMappings = {
-    arabic: {
-      model: "CAMeL-Lab/bert-base-arabic-camelbert-da",
-      labels: {
-        "EGY": { name: "Egyptian Arabic", description: "Common in Egypt and widely understood across the Arab world" },
-        "LEV": { name: "Levantine Arabic", description: "Used in Syria, Lebanon, Jordan, and Palestine" },
-        "GLF": { name: "Gulf Arabic", description: "Spoken in the Arabian Peninsula and Gulf states" },
-        "NOR": { name: "Modern Standard Arabic", description: "Formal Arabic used in media and literature" },
-        "MAG": { name: "Maghrebi Arabic", description: "Spoken in North African countries" }
-      }
-    },
-    english: {
-      model: "textattack/bert-base-uncased-yelp-polarity",
-      fallback: true // Will use keyword-based classification for now
-    }
-  };
-
-  // Load model for classification
-  const loadModel = async (selectedLanguage: string) => {
-    if (modelsRef.current[selectedLanguage as keyof typeof modelsRef.current]) {
-      return modelsRef.current[selectedLanguage as keyof typeof modelsRef.current];
-    }
-
-    setIsLoadingModel(true);
-    try {
-      if (selectedLanguage === "arabic") {
-        // Use text classification pipeline for Arabic dialect detection
-        const classifier = await pipeline(
-          "text-classification",
-          "CAMeL-Lab/bert-base-arabic-camelbert-da",
-          { 
-            device: "wasm"
-          }
-        );
-        modelsRef.current.arabic = classifier;
-        return classifier;
-      } else {
-        // For English, we'll use a keyword-based approach for now
-        // as there aren't great pre-trained English dialect models
-        modelsRef.current.english = "keyword-based";
-        return "keyword-based";
-      }
-    } catch (error) {
-      console.error("Error loading model:", error);
-      throw new Error("Failed to load classification model");
-    } finally {
-      setIsLoadingModel(false);
-    }
-  };
-
-  // Real classification function using ML models
+  // Real classification function using Supabase Edge Function
   const classifyDialect = async (inputText: string, selectedLanguage: string): Promise<ClassificationResult[]> => {
     try {
-      const model = await loadModel(selectedLanguage);
-      
-      if (selectedLanguage === "arabic" && model !== "keyword-based") {
-        // Use the loaded Arabic dialect classifier
-        const predictions = await model(inputText);
-        
-        // Process predictions and map to readable dialect names
-        const results = predictions
-          .filter((pred: any) => pred.score > 0.1) // Filter low confidence predictions
-          .map((pred: any) => {
-            const dialectInfo = dialectMappings.arabic.labels[pred.label as keyof typeof dialectMappings.arabic.labels];
-            return {
-              dialect: dialectInfo?.name || pred.label,
-              confidence: pred.score,
-              description: dialectInfo?.description || "Dialect classification result"
-            };
-          })
-          .sort((a: ClassificationResult, b: ClassificationResult) => b.confidence - a.confidence)
-          .slice(0, 3);
-        
-        return results.length > 0 ? results : [{
-          dialect: "Modern Standard Arabic",
-          confidence: 0.6,
-          description: "Formal Arabic used in media and literature"
-        }];
-      } else {
-        // Fallback keyword-based classification for English
-        return classifyEnglishByKeywords(inputText);
+      const { data, error } = await supabase.functions.invoke('classify-dialect', {
+        body: { text: inputText, language: selectedLanguage }
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
       }
+
+      return data.results || [];
     } catch (error) {
       console.error("Classification error:", error);
       // Fallback to keyword-based classification
@@ -129,6 +52,13 @@ const DialectClassifier = () => {
       levantine: ["شو", "كيفك", "بدي", "هيك", "مشان", "عم"],
       gulf: ["شلونك", "وش", "ليش", "عاد", "زين", "أبي"],
       maghrebi: ["كيفاش", "شحال", "بغيت", "درت", "مزيان"]
+    };
+
+    const dialectMappings = {
+      egyptian: { name: "Egyptian Arabic", description: "Common in Egypt and widely understood across the Arab world" },
+      levantine: { name: "Levantine Arabic", description: "Used in Syria, Lebanon, Jordan, and Palestine" },
+      gulf: { name: "Gulf Arabic", description: "Spoken in the Arabian Peninsula and Gulf states" },
+      maghrebi: { name: "Maghrebi Arabic", description: "Spoken in North African countries" }
     };
 
     const scores = {
@@ -151,9 +81,9 @@ const DialectClassifier = () => {
     const results = Object.entries(scores)
       .filter(([_, score]) => score > 0)
       .map(([dialect, score]) => ({
-        dialect: dialectMappings.arabic.labels[dialect.toUpperCase().slice(0, 3) as keyof typeof dialectMappings.arabic.labels]?.name || dialect,
+        dialect: dialectMappings[dialect as keyof typeof dialectMappings]?.name || dialect,
         confidence: Math.min(score, 0.9),
-        description: dialectMappings.arabic.labels[dialect.toUpperCase().slice(0, 3) as keyof typeof dialectMappings.arabic.labels]?.description || "Detected based on keyword analysis"
+        description: dialectMappings[dialect as keyof typeof dialectMappings]?.description || "Detected based on keyword analysis"
       }))
       .sort((a, b) => b.confidence - a.confidence);
 
@@ -309,17 +239,12 @@ const DialectClassifier = () => {
 
           <Button 
             onClick={handleAnalyze}
-            disabled={isAnalyzing || isLoadingModel || !text.trim()}
+            disabled={isAnalyzing || !text.trim()}
             variant="analyze"
             size="lg"
             className="w-full"
           >
-            {isLoadingModel ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Loading Model...
-              </>
-            ) : isAnalyzing ? (
+            {isAnalyzing ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Analyzing...
